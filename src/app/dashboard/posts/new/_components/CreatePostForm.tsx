@@ -25,7 +25,6 @@ import {
  * Create post form
  */
 export default function CreatePostForm() {
-
   /**
    * Platform connection status
    */
@@ -62,7 +61,6 @@ export default function CreatePostForm() {
         disable_stitch: false,
       },
       youtubeSettings: {
-        title: "",
         privacyStatus: "private",
       },
     },
@@ -159,10 +157,7 @@ export default function CreatePostForm() {
       ...(values.targets.youtube
         ? {
             youtubeSettings: {
-              title:
-                values.youtubeSettings?.title?.trim() ||
-                values.caption?.trim() ||
-                "Untitled video",
+              title: values.caption?.trim() || "Untitled video",
               description: youtubeDescription,
               privacyStatus: values.youtubeSettings?.privacyStatus || "private",
             },
@@ -175,8 +170,6 @@ export default function CreatePostForm() {
 
   return (
     <div className="mx-auto max-w-5xl px-4 py-6 md:px-6 md:py-8">
-
-      {/* Page header */}
       <div className="mb-6 space-y-2">
         <div className="inline-flex items-center gap-2 rounded-lg bg-muted px-3 py-1 text-xs font-medium text-muted-foreground">
           <PenSquare className="h-3.5 w-3.5" />
@@ -189,27 +182,17 @@ export default function CreatePostForm() {
         </p>
       </div>
 
-      {/* Main form */}
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
         <PostContentSection form={form} />
         <PostMediaSection form={form} />
-
         <PostTargetsSection
           form={form}
           conn={conn}
           isSubmitting={isSubmitting}
-
-          /**
-           * Publish action
-           */
           onPublish={() => {
             setValue("action", "publish", { shouldValidate: true });
             handleSubmit(onSubmit)();
           }}
-
-          /**
-           * Save as draft action
-           */
           onSaveDraft={() => {
             setValue("action", "draft", { shouldValidate: true });
             handleSubmit(onSubmit)();

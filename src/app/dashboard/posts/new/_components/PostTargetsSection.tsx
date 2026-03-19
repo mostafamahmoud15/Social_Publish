@@ -12,7 +12,6 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { PlatformRowProps, PostTargetsSectionProps } from "@/types/types";
 
 /**
@@ -39,7 +38,6 @@ function PlatformRow({
     >
       <div className="flex items-start justify-between gap-3">
         <div className="flex items-start gap-3">
-
           {/* Platform checkbox */}
           <Checkbox
             checked={checked}
@@ -129,7 +127,6 @@ export default function PostTargetsSection({
   return (
     <Card className="rounded-3xl border bg-white shadow-sm">
       <CardContent className="space-y-5 p-5 md:p-6">
-
         {/* Section title */}
         <div className="flex items-center gap-2 text-sm font-medium text-muted-foreground">
           <Settings2 className="h-4 w-4" />
@@ -312,31 +309,6 @@ export default function PostTargetsSection({
             <div className="flex items-center gap-2 text-sm font-medium">
               <Settings2 className="h-4 w-4 text-muted-foreground" />
               YouTube Settings
-            </div>
-
-            <div className="space-y-2">
-              <div className="text-xs font-medium text-muted-foreground">
-                Title
-              </div>
-
-              <Controller
-                control={control}
-                name="youtubeSettings.title"
-                render={({ field, fieldState }) => (
-                  <div className="space-y-1">
-                    <Input
-                      {...field}
-                      placeholder="Optional - defaults to caption"
-                      className="h-11 rounded-xl bg-white"
-                    />
-                    {fieldState.error && (
-                      <p className="text-sm text-red-600">
-                        {fieldState.error.message}
-                      </p>
-                    )}
-                  </div>
-                )}
-              />
             </div>
 
             <div className="space-y-2">
