@@ -13,6 +13,7 @@ import Cookies from "js-cookie";
 import { LoginForm } from "@/types/types";
 import { useQueryClient } from "@tanstack/react-query";
 import { getErrorMessage } from "@/lib/getErrorMessage";
+import Link from "next/link";
 
 /**
  * Login page
@@ -66,7 +67,7 @@ export default function LoginPage() {
     };
 
     return (
-        <div className="min-h-screen flex items-center justify-center p-4 bg-muted/30">
+        <div className="min-h-screen flex flex-col items-center justify-center p-4 bg-muted/30">
             <Card className="w-full max-w-md rounded-2xl">
 
                 <CardHeader>
@@ -153,6 +154,16 @@ export default function LoginPage() {
                     </p>
                 </CardContent>
             </Card>
+            <div className="mt-6 text-center text-sm text-gray-500">
+                By continuing, you agree to our{" "}
+                <Link href="/terms" className="underline text-blue-600">
+                    Terms of Service
+                </Link>
+                and
+                <Link href="/privacy" className="underline text-blue-600">
+                    Privacy Policy
+                </Link>
+            </div>
         </div>
     );
 }
