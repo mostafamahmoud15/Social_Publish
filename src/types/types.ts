@@ -145,7 +145,8 @@ export type PlatformState = {
   accountName?: string;
   accountExternalId?: string;
 };
-export type PrivacyLevel = "SELF_ONLY" | "PUBLIC_TO_EVERYONE" | "MUTUAL_FOLLOW_FRIENDS";
+
+
 export type Status = {
   connections: Record<Platform, PlatformState>;
 };

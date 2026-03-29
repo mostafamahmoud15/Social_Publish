@@ -23,7 +23,7 @@ import { useMemo, useState } from "react";
 import PlatformBadges from "../PlatformBadges/PlatformBadges";
 import StatusBadge from "../StatusBadge/StatusBadge";
 import useRetry from "@/hooks/useRetry";
-import { Platform, PostTableProps, PrivacyLevel } from "@/types/types";
+import { Platform, PostTableProps } from "@/types/types";
 import { canRetryPlatform, getPostPlatforms, hasAnyRetry, prettyPlatform } from "./helpers";
 import PlatformResultRow from "./PlatformResult";
 import useDeletePost from "@/hooks/useDeletePost";
@@ -51,13 +51,6 @@ export default function PostsTable({ posts }: PostTableProps) {
     error: string;
   } | null>(null);
 
-  // default TikTok retry settings
-  const DEFAULT_TIKTOK_SETTINGS = {
-    privacy_level: "PUBLIC_TO_EVERYONE" as const,
-    disable_comment: false,
-    disable_duet: false,
-    disable_stitch: false,
-  };
 
   // retry one or all platforms
   const doRetry = (id: string, platform?: Platform) => {
