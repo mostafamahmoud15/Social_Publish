@@ -38,7 +38,7 @@ export const loginSchema = z.object({
     ),
 });
 
-export type Login = z.infer<typeof loginSchema>;
+export type LoginType = z.infer<typeof loginSchema>;
 
 /**
  * =========================

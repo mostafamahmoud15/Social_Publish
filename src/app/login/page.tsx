@@ -2,18 +2,20 @@
 
 import * as React from "react";
 import { useRouter } from "next/navigation";
-import { useForm, Controller } from "react-hook-form";
+import { useForm, Controller, SubmitHandler } from "react-hook-form";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Alert, AlertDescription } from "@/components/ui/alert";
 import apiCall from "@/services/apiCall";
 import Cookies from "js-cookie";
 import { LoginForm } from "@/types/types";
 import { useQueryClient } from "@tanstack/react-query";
 import { getErrorMessage } from "@/lib/getErrorMessage";
 import Link from "next/link";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { LoginType, loginSchema } from "@/validation/validation";
+import { toastFlow } from "@/lib/toast";
 
 /**
  * Login page
@@ -21,8 +23,6 @@ import Link from "next/link";
 export default function LoginPage() {
     const router = useRouter();
 
-    // server error message
-    const [serverError, setServerError] = React.useState<string>("");
 
     // loading state while submitting
     const [loading, setLoading] = React.useState(false);
@@ -34,14 +34,14 @@ export default function LoginPage() {
      */
     const form = useForm<LoginForm>({
         defaultValues: { email: "", password: "" },
+        resolver: zodResolver(loginSchema),
         mode: "onChange",
     });
 
     /**
      * Handle form submit
      */
-    const onSubmit = async (values: LoginForm) => {
-        setServerError("");
+    const onSubmit: SubmitHandler<LoginType> = async (values) => {
         setLoading(true);
 
         try {
@@ -60,7 +60,7 @@ export default function LoginPage() {
         } catch (error) {
             // show readable error message
             const msg = getErrorMessage(error);
-            setServerError(msg);
+            toastFlow.error(msg)
         } finally {
             setLoading(false);
         }
@@ -79,12 +79,6 @@ export default function LoginPage() {
 
                 <CardContent className="space-y-4">
 
-                    {/* show server error */}
-                    {serverError && (
-                        <Alert variant="destructive">
-                            <AlertDescription>{serverError}</AlertDescription>
-                        </Alert>
-                    )}
 
                     <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
 

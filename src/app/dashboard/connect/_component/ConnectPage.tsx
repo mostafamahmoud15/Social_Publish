@@ -42,9 +42,6 @@ function Row({
   onToggle: (next: boolean) => void;
   disabled?: boolean;
 }) {
-  /**
-   * Human-readable platform name
-   */
   const title =
     platform === "facebook"
       ? "Facebook"
@@ -56,9 +53,6 @@ function Row({
             ? "YouTube"
             : "X";
 
-  /**
-   * Ref to trigger checkbox from the whole row
-   */
   const checkboxRef = React.useRef<HTMLButtonElement | null>(null);
 
   return (
@@ -78,60 +72,69 @@ function Row({
           checkboxRef.current?.click();
         }
       }}
-      className="w-full flex items-center justify-between rounded-lg border p-4 text-left transition hover:bg-muted/50 disabled:opacity-50 cursor-pointer"
+      className="
+        w-full cursor-pointer rounded-lg border p-4 text-left transition
+        hover:bg-muted/50
+        disabled:opacity-50
+      "
     >
-      <div className="flex items-center gap-4">
-        <div onClick={(e) => e.stopPropagation()}>
-          {/* Active checkbox */}
-          <Checkbox
-            ref={checkboxRef}
-            checked={state.active}
-            disabled={disabled}
-            onCheckedChange={(v) => onToggle(v === true)}
-          />
-        </div>
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+        <div className="flex min-w-0 items-start gap-3 sm:items-center sm:gap-4">
+          <div
+            onClick={(e) => e.stopPropagation()}
+            className="shrink-0 pt-0.5 sm:pt-0"
+          >
+            <Checkbox
+              ref={checkboxRef}
+              checked={state.active}
+              disabled={disabled}
+              onCheckedChange={(v) => onToggle(v === true)}
+            />
+          </div>
 
-        {/* Platform icon */}
-        <PlatformIcon platform={platform} />
+          <div className="shrink-0">
+            <PlatformIcon platform={platform} />
+          </div>
 
-        <div>
-          <div className="font-medium">{title}</div>
+          <div className="min-w-0">
+            <div className="truncate font-medium">{title}</div>
 
-          {/* Account connection info */}
-          <div className="text-xs text-muted-foreground">
-            {state.connected ? (
-              <>
-                Connected:{" "}
-                <span className="font-medium text-foreground">
-                  {state.accountName ?? ""}
-                </span>
-              </>
-            ) : (
-              "Not connected"
-            )}
+            <div className="text-xs text-muted-foreground break-words">
+              {state.connected ? (
+                <>
+                  Connected:{" "}
+                  <span className="font-medium text-foreground break-all">
+                    {state.accountName ?? ""}
+                  </span>
+                </>
+              ) : (
+                "Not connected"
+              )}
+            </div>
           </div>
         </div>
-      </div>
 
-      <div className="flex items-center gap-2">
-        {/* Quick connect badge if not connected yet */}
-        {!state.connected && (
+        <div className="flex flex-wrap items-center gap-2 sm:justify-end">
+          {!state.connected && (
+            <Badge
+              variant="outline"
+              onClick={(e) => {
+                e.stopPropagation();
+                onToggle(true);
+              }}
+              className="cursor-pointer"
+            >
+              Connect
+            </Badge>
+          )}
+
           <Badge
-            variant="outline"
-            onClick={(e) => {
-              e.stopPropagation();
-              onToggle(true);
-            }}
-            className="cursor-pointer"
+            variant={state.connected ? "default" : "secondary"}
+            className="whitespace-nowrap"
           >
-            Connect
+            {state.connected ? "Connected" : "Not connected"}
           </Badge>
-        )}
-
-        {/* Connection status badge */}
-        <Badge variant={state.connected ? "default" : "secondary"}>
-          {state.connected ? "Connected" : "Not connected"}
-        </Badge>
+        </div>
       </div>
     </div>
   );
