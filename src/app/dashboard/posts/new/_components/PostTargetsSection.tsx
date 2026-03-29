@@ -4,7 +4,6 @@ import { Controller, useWatch } from "react-hook-form";
 import {
   SendHorizonal,
   Settings2,
-  Video,
 } from "lucide-react";
 import { FaFacebook, FaInstagram, FaTiktok, FaYoutube } from "react-icons/fa";
 import { cn } from "@/lib/utils";
@@ -98,31 +97,13 @@ export default function PostTargetsSection({
     defaultValue: "images",
   });
 
-  /**
-   * Watch selected targets
-   */
-  const targets = useWatch({
-    control,
-    name: "targets",
-    defaultValue: {
-      facebook: false,
-      instagram: false,
-      tiktok: false,
-      youtube: false,
-    },
-  });
 
   /**
-   * Disable video-only platforms when media is images
+   * TikTok and YouTube are video-only platforms,
+   * so we disable them when the user selects images.
    */
   const tiktokDisabled = kind === "images";
   const youtubeDisabled = kind === "images";
-
-  /**
-   * Show extra settings only when platform is selected
-   */
-  const showTikTokSettings = kind === "video" && !!targets.tiktok;
-  const showYoutubeSettings = kind === "video" && !!targets.youtube;
 
   return (
     <Card className="rounded-3xl border bg-white shadow-sm">
@@ -183,7 +164,7 @@ export default function PostTargetsSection({
                 hint={
                   tiktokDisabled
                     ? "TikTok requires video media."
-                    : "Publish your video to TikTok."
+                    : "Publish your video to TikTok. Privacy is set to Public automatically."
                 }
                 icon={<FaTiktok className="h-5 w-5 text-black" />}
                 onChange={(value) => field.onChange(value)}
@@ -205,7 +186,7 @@ export default function PostTargetsSection({
                 hint={
                   youtubeDisabled
                     ? "YouTube requires video media."
-                    : "Publish your video to YouTube."
+                    : "Publish your video to YouTube. Privacy is set to Public automatically."
                 }
                 icon={<FaYoutube className="h-5 w-5 text-[#FF0000]" />}
                 onChange={(value) => field.onChange(value)}
@@ -213,133 +194,6 @@ export default function PostTargetsSection({
             )}
           />
         </div>
-
-        {/* TikTok settings */}
-        {showTikTokSettings && (
-          <div className="space-y-4 rounded-2xl border bg-muted/30 p-4">
-            <div className="flex items-center gap-2 text-sm font-medium">
-              <Video className="h-4 w-4 text-muted-foreground" />
-              TikTok Settings
-            </div>
-
-            <div className="space-y-2">
-              <div className="text-xs font-medium text-muted-foreground">
-                Privacy
-              </div>
-
-              <Controller
-                control={control}
-                name="tiktokSettings.privacy_level"
-                render={({ field }) => (
-                  <select
-                    className="h-11 w-full rounded-xl border bg-white px-3 text-sm outline-none focus:ring-1"
-                    value={field.value}
-                    onChange={(e) => field.onChange(e.target.value)}
-                  >
-                    <option value="PUBLIC_TO_EVERYONE">Public</option>
-                    <option value="MUTUAL_FOLLOW_FRIENDS">Friends</option>
-                    <option value="SELF_ONLY">Private</option>
-                  </select>
-                )}
-              />
-            </div>
-
-            {/* TikTok extra options */}
-            <div className="grid gap-3 sm:grid-cols-3">
-              <div className="flex items-center gap-2 rounded-xl border bg-white p-3">
-                <Controller
-                  control={control}
-                  name="tiktokSettings.disable_comment"
-                  render={({ field }) => (
-                    <Checkbox
-                      checked={!!field.value}
-                      onCheckedChange={(value) =>
-                        field.onChange(Boolean(value))
-                      }
-                    />
-                  )}
-                />
-                <span className="text-sm">Disable comments</span>
-              </div>
-
-              <div className="flex items-center gap-2 rounded-xl border bg-white p-3">
-                <Controller
-                  control={control}
-                  name="tiktokSettings.disable_duet"
-                  render={({ field }) => (
-                    <Checkbox
-                      checked={!!field.value}
-                      onCheckedChange={(value) =>
-                        field.onChange(Boolean(value))
-                      }
-                    />
-                  )}
-                />
-                <span className="text-sm">Disable duet</span>
-              </div>
-
-              <div className="flex items-center gap-2 rounded-xl border bg-white p-3">
-                <Controller
-                  control={control}
-                  name="tiktokSettings.disable_stitch"
-                  render={({ field }) => (
-                    <Checkbox
-                      checked={!!field.value}
-                      onCheckedChange={(value) =>
-                        field.onChange(Boolean(value))
-                      }
-                    />
-                  )}
-                />
-                <span className="text-sm">Disable stitch</span>
-              </div>
-            </div>
-
-            {/* TikTok note */}
-            <div className="rounded-2xl bg-white px-4 py-3 text-xs text-muted-foreground">
-              Some TikTok apps may only allow private posting until the app is
-              fully audited.
-            </div>
-          </div>
-        )}
-
-        {/* YouTube settings */}
-        {showYoutubeSettings && (
-          <div className="space-y-4 rounded-2xl border bg-muted/30 p-4">
-            <div className="flex items-center gap-2 text-sm font-medium">
-              <Settings2 className="h-4 w-4 text-muted-foreground" />
-              YouTube Settings
-            </div>
-
-            <div className="space-y-2">
-              <div className="text-xs font-medium text-muted-foreground">
-                Privacy
-              </div>
-
-              <Controller
-                control={control}
-                name="youtubeSettings.privacyStatus"
-                render={({ field }) => (
-                  <select
-                    className="h-11 w-full rounded-xl border bg-white px-3 text-sm outline-none focus:ring-1"
-                    value={field.value}
-                    onChange={(e) => field.onChange(e.target.value)}
-                  >
-                    <option value="private">Private</option>
-                    <option value="unlisted">Unlisted</option>
-                    <option value="public">Public</option>
-                  </select>
-                )}
-              />
-            </div>
-
-            {/* YouTube note */}
-            <div className="rounded-2xl bg-white px-4 py-3 text-xs text-muted-foreground">
-              The caption and hashtags will be used automatically as the video
-              description.
-            </div>
-          </div>
-        )}
 
         {/* Form-level targets error */}
         {errors.targets?.message && (

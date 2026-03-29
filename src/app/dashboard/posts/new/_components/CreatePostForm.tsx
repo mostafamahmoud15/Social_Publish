@@ -36,6 +36,13 @@ export default function CreatePostForm() {
 
   /**
    * Form setup
+   *
+   * We keep TikTok / YouTube defaults in form state,
+   * but we do not expose them in the UI anymore.
+   *
+   * Business rule:
+   * - TikTok should always publish as Public
+   * - YouTube should always publish as Public
    */
   const form = useForm<CreatePostFormValues>({
     resolver: zodResolver(CreatePostFormSchema),
@@ -132,6 +139,10 @@ export default function CreatePostForm() {
 
     /**
      * Upload video and prepare payload
+     *
+     * Important:
+     * We enforce Public defaults here directly from the frontend.
+     * No need for any extra UI controls.
      */
     const uploaded = await uploadVideo(values.media.video);
     const youtubeDescription = buildYoutubeDescription(values);
@@ -146,10 +157,10 @@ export default function CreatePostForm() {
       ...(values.targets.tiktok
         ? {
             tiktokSettings: {
-              privacy_level: values.tiktokSettings!.privacy_level!,
-              disable_comment: Boolean(values.tiktokSettings?.disable_comment),
-              disable_duet: Boolean(values.tiktokSettings?.disable_duet),
-              disable_stitch: Boolean(values.tiktokSettings?.disable_stitch),
+              privacy_level: "PUBLIC_TO_EVERYONE",
+              disable_comment: false,
+              disable_duet: false,
+              disable_stitch: false,
             },
           }
         : {}),
@@ -159,7 +170,7 @@ export default function CreatePostForm() {
             youtubeSettings: {
               title: values.caption?.trim() || "Untitled video",
               description: youtubeDescription,
-              privacyStatus: values.youtubeSettings?.privacyStatus || "private",
+              privacyStatus: "public",
             },
           }
         : {}),

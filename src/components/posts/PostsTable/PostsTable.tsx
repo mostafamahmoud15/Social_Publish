@@ -42,10 +42,6 @@ export default function PostsTable({ posts }: PostTableProps) {
   // currently busy post id while retry is running
   const busyId = retry.variables?.id;
 
-  // TikTok privacy dialog state
-  const [ttOpen, setTtOpen] = useState(false);
-  const [ttPostId, setTtPostId] = useState<string | null>(null);
-  const [privacy, setPrivacy] = useState<PrivacyLevel>("SELF_ONLY");
 
   // details dialog state for showing full error
   const [detailsOpen, setDetailsOpen] = useState(false);
@@ -57,7 +53,7 @@ export default function PostsTable({ posts }: PostTableProps) {
 
   // default TikTok retry settings
   const DEFAULT_TIKTOK_SETTINGS = {
-    privacy_level: "SELF_ONLY" as const,
+    privacy_level: "PUBLIC_TO_EVERYONE" as const,
     disable_comment: false,
     disable_duet: false,
     disable_stitch: false,
@@ -69,7 +65,17 @@ export default function PostsTable({ posts }: PostTableProps) {
       id,
       platform,
       ...(platform === "tiktok" && {
-        tiktokSettings: DEFAULT_TIKTOK_SETTINGS,
+        tiktokSettings: {
+          privacy_level: "PUBLIC_TO_EVERYONE",
+          disable_comment: false,
+          disable_duet: false,
+          disable_stitch: false,
+        },
+      }),
+      ...(platform === "youtube" && {
+        youtubeSettings: {
+          privacyStatus: "public",
+        },
       }),
     });
   };
@@ -80,39 +86,9 @@ export default function PostsTable({ posts }: PostTableProps) {
     setDetailsOpen(true);
   };
 
-  // open TikTok retry dialog first because it needs privacy level
-  const openTikTokRetry = (id: string) => {
-    setTtPostId(id);
-    setPrivacy("SELF_ONLY");
-    setTtOpen(true);
-  };
-
-  // confirm TikTok retry with selected privacy
-  const confirmTikTokRetry = () => {
-    if (!ttPostId) return;
-
-    retry.mutate({
-      id: ttPostId,
-      platform: "tiktok",
-      tiktokSettings: {
-        privacy_level: privacy,
-        disable_comment: false,
-        disable_duet: false,
-        disable_stitch: false,
-      },
-    });
-
-    setTtOpen(false);
-    setTtPostId(null);
-  };
 
   // special handling for TikTok retry
   const handlePlatformRetry = (postId: string, platform: Platform) => {
-    if (platform === "tiktok") {
-      openTikTokRetry(postId);
-      return;
-    }
-
     doRetry(postId, platform);
   };
 
@@ -235,10 +211,6 @@ export default function PostsTable({ posts }: PostTableProps) {
 
           {details && (
             <div className="space-y-2">
-              <div className="text-sm">
-                Post: <span className="font-mono">{details.postId}</span>
-              </div>
-
               <pre className="text-xs whitespace-pre-wrap rounded-lg bg-muted p-3 max-h-90 overflow-auto">
                 {details.error}
               </pre>
@@ -247,48 +219,6 @@ export default function PostsTable({ posts }: PostTableProps) {
         </DialogContent>
       </Dialog>
 
-      {/* TikTok retry dialog because privacy level is required */}
-      <Dialog open={ttOpen} onOpenChange={setTtOpen}>
-        <DialogContent className="max-w-md">
-          <DialogHeader>
-            <DialogTitle>Retry TikTok publish</DialogTitle>
-          </DialogHeader>
-
-          <div className="space-y-3">
-            <div className="text-sm text-muted-foreground">
-              TikTok يحتاج <span className="font-medium">privacy_level</span> في الـ retry.
-            </div>
-
-            <div className="space-y-2">
-              <div className="text-sm font-medium">Privacy level</div>
-
-              <select
-                className="w-full rounded-md border bg-white px-3 py-2 text-sm"
-                value={privacy}
-                onChange={(e) => setPrivacy(e.target.value as PrivacyLevel)}
-              >
-                <option value="SELF_ONLY">Self only (Private)</option>
-                <option value="PUBLIC_TO_EVERYONE">Public</option>
-                <option value="MUTUAL_FOLLOW_FRIENDS">Friends</option>
-              </select>
-            </div>
-
-            <div className="flex justify-end gap-2 pt-2">
-              <Button
-                variant="outline"
-                onClick={() => setTtOpen(false)}
-                disabled={retry.isPending}
-              >
-                Cancel
-              </Button>
-
-              <Button onClick={confirmTikTokRetry} disabled={retry.isPending}>
-                {retry.isPending ? "Retrying..." : "Retry"}
-              </Button>
-            </div>
-          </div>
-        </DialogContent>
-      </Dialog>
     </div>
   );
 }
