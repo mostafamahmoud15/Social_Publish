@@ -73,7 +73,7 @@ export default function LoginPage() {
                 <CardHeader>
                     <CardTitle className="text-xl">Sign in</CardTitle>
                     <CardDescription>
-                        Use your company account credentials.
+                        Use your account credentials.
                     </CardDescription>
                 </CardHeader>
 
