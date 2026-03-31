@@ -57,19 +57,6 @@ export default function PostsTable({ posts }: PostTableProps) {
     retry.mutate({
       id,
       platform,
-      ...(platform === "tiktok" && {
-        tiktokSettings: {
-          privacy_level: "PUBLIC_TO_EVERYONE",
-          disable_comment: false,
-          disable_duet: false,
-          disable_stitch: false,
-        },
-      }),
-      ...(platform === "youtube" && {
-        youtubeSettings: {
-          privacyStatus: "public",
-        },
-      }),
     });
   };
 

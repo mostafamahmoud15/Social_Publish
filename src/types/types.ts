@@ -111,8 +111,6 @@ export type CreatePostPayload =
     hashtags: string[];
     targets: Targets;
     media: VideoMedia;
-    tiktokSettings?: TikTokSettings;
-    youtubeSettings?: YoutubeSettings;
   };
 
 
