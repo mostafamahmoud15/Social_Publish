@@ -41,7 +41,7 @@ const useRetry = () => {
           params: platform ? { platform } : undefined,
         }
       );
-
+console.log(data.data);
       return data.data;
     },
 
