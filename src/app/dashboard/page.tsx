@@ -12,6 +12,7 @@ import {
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import useMe from "@/hooks/useMe";
+import { Role } from "@/constant/constant";
 
 /**
  * Dashboard home page
@@ -124,8 +125,11 @@ export default function Home() {
           </Card>
         </Link>
 
+
+
         {/* Users card */}
-        <Link href="/dashboard/users">
+
+        {user?.role === Role.OWNER && <Link href="/dashboard/users">
           <Card className="group rounded-2xl border transition hover:-translate-y-1 hover:shadow-lg">
             <CardContent className="space-y-4 p-5">
               <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-black text-white">
@@ -145,7 +149,8 @@ export default function Home() {
               </div>
             </CardContent>
           </Card>
-        </Link>
+        </Link>}
+
 
       </section>
     </div>
