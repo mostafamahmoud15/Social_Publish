@@ -141,7 +141,6 @@ export default function Sidebar() {
           {/* Header section */}
           <div className="border-b p-3">
             <div className="flex items-center justify-between gap-2">
-
               {/* App title (hidden when collapsed) */}
               <div
                 className={cn(
@@ -245,7 +244,7 @@ export default function Sidebar() {
       {/* ================= Mobile Drawer ================= */}
       <aside
         className={cn(
-          "fixed left-0 top-0 z-50 flex h-screen w-72 flex-col bg-white shadow-2xl transition-transform duration-300 ease-in-out md:hidden",
+          "fixed left-0 top-0 z-50 flex h-dvh w-72 flex-col bg-white shadow-2xl transition-transform duration-300 ease-in-out md:hidden",
           mobileOpen ? "translate-x-0" : "-translate-x-full"
         )}
       >
@@ -292,22 +291,17 @@ export default function Sidebar() {
         />
 
         {/* Logout */}
-        <div className="mt-auto border-t p-3">
+        <div className="mt-auto shrink-0 border-t p-3">
           <button
             onClick={logout}
-            className="flex w-full items-center rounded-xl px-3 py-2.5 text-sm transition hover:bg-gray-200"
+            className="flex w-full items-center rounded-xl px-3 py-2.5 text-sm text-gray-700 transition hover:bg-gray-200"
             aria-label="Logout"
           >
             <div className="flex min-w-8 justify-center">
               <LogOut className="h-5 w-5" />
             </div>
 
-            <span
-              className={cn(
-                "overflow-hidden whitespace-nowrap transition-[max-width,opacity,margin] duration-300 ease-in-out",
-                expanded ? "ml-3 max-w-48 opacity-100" : "ml-0 max-w-0 opacity-0"
-              )}
-            >
+            <span className="ml-3 whitespace-nowrap">
               Logout
             </span>
           </button>
