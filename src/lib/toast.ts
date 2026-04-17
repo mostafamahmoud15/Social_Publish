@@ -43,6 +43,6 @@ export const toastFlow = {
    * Dismiss a specific toast by id
    * or dismiss all toasts if no id is provided
    */
-  dismiss: (id?: string) =>
+  dismiss: (id?: string | number) =>
     id ? toast.dismiss(id) : toast.dismiss(),
 };

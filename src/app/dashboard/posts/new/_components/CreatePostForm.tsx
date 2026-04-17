@@ -19,6 +19,7 @@ import PostTargetsSection from "./PostTargetsSection";
 import {
   hasAnySelectedTarget,
 } from "../_lib/create-post.helpers";
+import { toastFlow } from "@/lib/toast";
 
 /**
  * Create post form
@@ -96,55 +97,74 @@ export default function CreatePostForm() {
    * Handle form submit
    */
   const onSubmit: SubmitHandler<CreatePostFormValues> = async (values) => {
-    const action = values.action;
+    let toastId: string | number | undefined;
 
-    /**
-     * Images flow
-     */
-    if (values.media.kind === "images") {
-      const uploaded = await uploadManyImages(values.media.images);
+    try {
+      const action = values.action;
+
+      /**
+       * Images flow
+       */
+      if (values.media.kind === "images") {
+        toastId = toastFlow.loading("Uploading images...");
+
+        const uploaded = await uploadManyImages(values.media.images);
+
+        toastFlow.dismiss(toastId);
+
+        const payload: CreatePostPayload = {
+          action,
+          caption: values.caption,
+          hashtags: values.hashtags,
+          targets: values.targets,
+          media: { kind: "images", images: uploaded },
+        };
+
+        mutate.mutate({ data: payload });
+        return;
+      }
+
+      /**
+       * Video validations
+       */
+      if (!values.media.video) {
+        throw new Error("Please select a video");
+      }
+
+      if (!hasAnySelectedTarget(values)) {
+        throw new Error("Please select at least one platform");
+      }
+
+      /**
+       * Video upload
+       */
+      toastId = toastFlow.loading("Uploading video...");
+
+      const uploaded = await uploadVideo(values.media.video);
+
+      toastFlow.dismiss(toastId);
 
       const payload: CreatePostPayload = {
         action,
         caption: values.caption,
         hashtags: values.hashtags,
         targets: values.targets,
-        media: { kind: "images", images: uploaded },
+        media: { kind: "video", video: uploaded },
       };
 
       mutate.mutate({ data: payload });
-      return;
+
+    } catch (error) {
+      const message =
+        error instanceof Error
+          ? error.message
+          : "Something went wrong";
+
+  
+      if (toastId) toastFlow.dismiss(toastId);
+
+      toastFlow.error(message);
     }
-
-    /**
-     * Video validations
-     */
-    if (!values.media.video) {
-      throw new Error("Please select a video");
-    }
-
-    if (!hasAnySelectedTarget(values)) {
-      throw new Error("Please select at least one platform");
-    }
-
-    /**
-     * Upload video and prepare payload
-     *
-     * Important:
-     * We enforce Public defaults here directly from the frontend.
-     * No need for any extra UI controls.
-     */
-    const uploaded = await uploadVideo(values.media.video);
-
-    const payload: CreatePostPayload = {
-      action,
-      caption: values.caption,
-      hashtags: values.hashtags,
-      targets: values.targets,
-      media: { kind: "video", video: uploaded },
-    };
-
-    mutate.mutate({ data: payload });
   };
 
   return (
